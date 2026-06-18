@@ -240,6 +240,52 @@
                 btn.disabled = false;
             }
         });
+
+
+// আপনার লাইভ গুগল অ্যাপস স্ক্রিপ্ট ইউআরএল (ল্যান্ডিং পেজের জন্য)
+const GOOGLE_APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoEpUeKb1yMdYJRmB8hImIZLV6_2rbRP6nWeQn76xrtesNV2wO-8BZDT-LOPcxgRQp/exec";
+
+function openPaymentModal(amount, planName) {
+    document.getElementById('form-amount').value = amount;
+    document.getElementById('payment-modal').classList.remove('hidden');
+}
+function closeModal() {
+    document.getElementById('payment-modal').classList.add('hidden');
+}
+
+document.getElementById('payment-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    btn.innerText = "রিকোয়েস্ট পাঠানো হচ্ছে...";
+    btn.disabled = true;
+
+    const payload = {
+        email: document.getElementById('form-email').value.trim(),
+        sender: document.getElementById('form-sender').value.trim(),
+        amount: document.getElementById('form-amount').value,
+        trxid: document.getElementById('form-trx').value.trim(),
+        timestamp: new Date().toLocaleString()
+    };
+
+    try {
+        await fetch(GOOGLE_APP_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        alert("ধন্যবাদ! আপনার পেমেন্ট ডেটা সফলভাবে সিস্টেমে সেভ হয়েছে। ভেরিফিকেশন শেষে ১০-৩০ মিনিটের মধ্যে সার্ভিস একটিভ হবে।");
+        closeModal();
+        e.target.reset();
+    } catch(err) {
+        alert("দুঃখিত, ডাটা পাঠাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    } finally {
+        btn.innerText = "ভেরিফিকেশন রিকোয়েস্ট পাঠান";
+        btn.disabled = false;
+    }
+});
+
+        
     </script>
 </body>
 
